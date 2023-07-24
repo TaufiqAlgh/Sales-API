@@ -16,7 +16,6 @@ app.get('/api/sales', (req,res) => {
         if (err) response(500, "Invalid", "Server Error", res)
         response (200, result, "Menampilkan Data Seluruh Sales", res)
     })
-    res.send("akodwako")
 })
 app.get('/api/sales/:id', (req, res) => {
     const id = req.params.id

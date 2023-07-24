@@ -1,10 +1,11 @@
-const mysql = require('mysql')
+const config = {
+    db : {
+        host : "localhost",
+        user : "root",
+        password : "",
+        database : "pjs-test"
+    },
+    listPerPage : 10,
+}
 
-const db = mysql.createConnection({
-    host : 'localhost',
-    user : 'root',
-    password : '',
-    database : 'pjs-test'
-})
-
-module.exports = db
+module.exports = config
