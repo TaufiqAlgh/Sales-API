@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const LoginService = require('../services/LoginServices')
+const bcrypt = require('bcrypt')
 
-const secretKey = 'malida'
+const secretKey = 'topikganteng'
 
 const loginUser = async function (req, res, next) {
     const {password} = req.body
@@ -11,9 +12,17 @@ const loginUser = async function (req, res, next) {
     }
     const user = login[0]
     
-    if(user.password !== `${password}`) {
-        return res.status(401).json({ error: 'Invalid password' });
-    }
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (err) {
+        console.error('Error comparing passwords:', err);
+        return res.status(500).json({ error: 'Server error' });
+      }
+
+      if (!isMatch) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+    })
+
     const token = jwt.sign({ userId: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
 
     res.json({ token})
