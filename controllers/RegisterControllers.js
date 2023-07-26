@@ -1,10 +1,10 @@
 const RegisterServices = require('../services/RegisterServices')
 
 const registerUser = async function (req, res, next) {
-    const {username, password, email} = req.body
-
-    if (!email.endsWith("@gmail.com")) {
-        return res.status(400).json({errors: 'Invalid Email Format Please use @gmail.com'});
+    const {email} = req.body
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({errors: 'Invalid Email Format Please use the Correct Email Format'});
     }
     
     let checkUserEmail = await RegisterServices.checkUserEmail(req.body)
@@ -12,7 +12,6 @@ const registerUser = async function (req, res, next) {
         return res.status(409).json({ error: 'Username or email already exists' });
     }
     let hashedPassword = await RegisterServices.hashpassword(req.body)
-    console.log (hashedPassword);
     try {
         res.json (await RegisterServices.RegisterUser(req.body, hashedPassword));
     } catch (err) {
