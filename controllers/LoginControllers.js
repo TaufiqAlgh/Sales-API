@@ -1,14 +1,19 @@
 const jwt = require('jsonwebtoken');
 const LoginService = require('../services/LoginServices')
 const bcrypt = require('bcrypt')
-
+const Pkg = require('../pkg')
 const secretKey = 'topikganteng'
 
 const loginUser = async function (req, res, next) {
-    const {password} = req.body
+    const {email , password} = req.body
+    let emailregex = await Pkg.emailRegex()
+    if (!emailregex.test(email)){
+      return res.status(400).json({errors: 'Invalid Email Format Please use the Correct Email Format'});
+    }
+    
     let login = await LoginService.FindUser(req.body)
     if (login.length === 0) {
-        return res.status(401).json({ error: 'Invalid username or password' });
+        return res.status(401).json({ error: 'Invalid email or password' });
     }
     const user = login[0]
     
