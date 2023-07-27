@@ -1,12 +1,7 @@
 const db = require ('../connection')
 const salesService = require('../services/SalesServices')
-const Pkg = require('../pkg')
 
 const getAllSales =  async function (req,res,next)   {
-  const roles = await Pkg.roles(req.user)
-  if (roles) {
-    return res.status(403).json({ error: 'You are not authorized to access this route' });
-  }
     try {
       res.json(await salesService.getAll())
     } catch (err) {
@@ -25,11 +20,6 @@ const getSalesById = async function(req, res, next)  {
     }
 }
 const createSales = async (req, res, next) => {
-    
-  const roles = await Pkg.roles(req.user)
-  if (roles) {
-    return res.status(403).json({ error: 'You are not authorized to access this route' });
-  }
   
    let checknama = await salesService.checkNama(req.body)
    if (checknama.length > 0){
@@ -51,10 +41,7 @@ const createSales = async (req, res, next) => {
 
 }
 const updateSales = async function (req, res, next) {
-  const roles = await Pkg.roles(req.user)
-  if (roles) {
-    return res.status(403).json({ error: 'You are not authorized to access this route' });
-  }
+
     let checknama = await salesService.checkNama(req.body)
    if (checknama.length > 0){
     res.status(400).json({error : 'Nama Already Exist'})
@@ -80,10 +67,6 @@ const updateSales = async function (req, res, next) {
 
 }
 const deleteSales = async function (req, res, next) {
-  const roles = await Pkg.roles(req.user)
-  if (roles) {
-    return res.status(403).json({ error: 'You are not authorized to access this route' });
-  }
   
   let checksell = await salesService.checkSell(req.params.id)
   if (checksell.length > 0) {

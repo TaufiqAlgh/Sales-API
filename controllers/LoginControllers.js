@@ -33,24 +33,60 @@ const loginUser = async function (req, res, next) {
     res.json({ token})
 }
 
-function authenticateToken(req, res, next) {
+
+function authenticateToken(User){
+  return function (req, res, next) {
     const token = req.headers['authorization'];
-  
+    
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });
     }
-  
+    
     jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
         return res.status(403).json({ error: 'Invalid token' });
       }
-  
+      const userRole = decoded.role
+      
+      if(!User.includes(userRole)){
+        return res.status(403).json({ error: 'You are not authorized to acces this route'})
+      }
+      
       req.user = decoded;
       next();
     });
+    
   }
+}
 
+
+//Double Middleware
+
+// function authenticateToken(req, res, next) {
+//       const token = req.headers['authorization'];
+  
+//       if (!token) {
+//           return res.status(401).json({ error: 'No token provided' });
+//         }
+  
+//     jwt.verify(token, secretKey, (err, decoded) => {
+//       if (err) {
+//         return res.status(403).json({ error: 'Invalid token' });
+//       }
+  
+//       req.user = decoded;
+//       next();
+//     });
+//   }
+
+// function authenticateAdmin(req, res, next) {
+//   if (req.user.role !== 2) {
+//     return res.status(403).json({ error: 'You are not authorized to access this route' });
+//   }
+
+//   next();
+// }
 module.exports = {
-    loginUser,
-    authenticateToken
+  loginUser,
+  authenticateToken,
 }
