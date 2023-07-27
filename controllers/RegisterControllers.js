@@ -2,9 +2,8 @@ const RegisterServices = require('../services/RegisterServices')
 const Pkg = require('../pkg')
 
 const registerUser = async function (req, res, next) {
-    const {email} = req.body
-    const emailRegex = await Pkg.emailRegex()
-    if (!emailRegex.test(email)) {
+    const emailRegex = await Pkg.emailRegex(req.body)
+    if (!emailRegex) {
         return res.status(400).json({errors: 'Invalid Email Format Please use the Correct Email Format'});
     }
     

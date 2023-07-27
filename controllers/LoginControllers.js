@@ -5,9 +5,9 @@ const Pkg = require('../pkg')
 const secretKey = 'topikganteng'
 
 const loginUser = async function (req, res, next) {
-    const {email , password} = req.body
-    let emailregex = await Pkg.emailRegex()
-    if (!emailregex.test(email)){
+    const {password} = req.body
+    let emailregex = await Pkg.emailRegex(req.body)
+    if (!emailregex){
       return res.status(400).json({errors: 'Invalid Email Format Please use the Correct Email Format'});
     }
     
@@ -16,7 +16,7 @@ const loginUser = async function (req, res, next) {
         return res.status(401).json({ error: 'Invalid email or password' });
     }
     const user = login[0]
-    
+  
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) {
         console.error('Error comparing passwords:', err);
@@ -28,7 +28,7 @@ const loginUser = async function (req, res, next) {
       }
     })
 
-    const token = jwt.sign({ userId: user.id, username: user.username }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id, username: user.username, role: user.roles_id }, secretKey, { expiresIn: '1h' });
 
     res.json({ token})
 }

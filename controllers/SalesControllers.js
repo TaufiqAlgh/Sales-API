@@ -1,8 +1,12 @@
 const db = require ('../connection')
-const response = require ('../response')
 const salesService = require('../services/SalesServices')
+const Pkg = require('../pkg')
 
 const getAllSales =  async function (req,res,next)   {
+  const roles = await Pkg.roles(req.user)
+  if (roles) {
+    return res.status(403).json({ error: 'You are not authorized to access this route' });
+  }
     try {
       res.json(await salesService.getAll())
     } catch (err) {
@@ -22,7 +26,10 @@ const getSalesById = async function(req, res, next)  {
 }
 const createSales = async (req, res, next) => {
     
-   const { nama, kota } = req.body;
+  const roles = await Pkg.roles(req.user)
+  if (roles) {
+    return res.status(403).json({ error: 'You are not authorized to access this route' });
+  }
   
    let checknama = await salesService.checkNama(req.body)
    if (checknama.length > 0){
@@ -44,9 +51,10 @@ const createSales = async (req, res, next) => {
 
 }
 const updateSales = async function (req, res, next) {
-    const {id} = req.params
-    const {nama , kota } = req.body
-
+  const roles = await Pkg.roles(req.user)
+  if (roles) {
+    return res.status(403).json({ error: 'You are not authorized to access this route' });
+  }
     let checknama = await salesService.checkNama(req.body)
    if (checknama.length > 0){
     res.status(400).json({error : 'Nama Already Exist'})
@@ -72,7 +80,10 @@ const updateSales = async function (req, res, next) {
 
 }
 const deleteSales = async function (req, res, next) {
-    const {id} = req.params
+  const roles = await Pkg.roles(req.user)
+  if (roles) {
+    return res.status(403).json({ error: 'You are not authorized to access this route' });
+  }
   
   let checksell = await salesService.checkSell(req.params.id)
   if (checksell.length > 0) {
@@ -86,33 +97,6 @@ const deleteSales = async function (req, res, next) {
     next(err);
   }
 
-    // const CheckSellQuery = `SELECT * FROM trpenjualan WHERE jul_sal_id = '${id}'`
-    // db.query (CheckSellQuery, (err, result) => {
-    //   if (err) {
-    //     console.error('Error executing query:', err);
-    //     res.status(500).json({ error: 'Server error' });
-    //     return;
-    //   }
-    //   if (result.length > 0) {
-    //     res.status(400).json({ error: 'Cannot Delete. There are sales transactions that have done by this sales' });
-    //     return;
-    //   }
-  
-    //   // delete query
-    //   const deletequery = `DELETE FROM mssalesman WHERE sal_id = '${id}'`
-    //   db.query (deletequery, (err,result) => {
-    //     if (err) {
-    //       console.error('Error executing query:', err);
-    //       res.status(500).json({ error: 'Server error' });
-    //       return;
-    //     }
-    //     if (result.affectedRows > 0) {
-    //       res.json({ success: true, message: 'Sales record deleted successfully' });
-    //     } else {
-    //       res.status(400).json({ error: 'Sales record not found' })
-    //     }
-    //   })
-    // })
   }
 module.exports = {
     getAllSales,
